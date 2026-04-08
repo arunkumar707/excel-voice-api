@@ -133,16 +133,12 @@ export class ExcelWorkbooksService {
       const fr = byRow.get(excelRow);
       const row: (string | number | null)[] = Array(width).fill(null);
       if (fr) {
-        row[0] =
-          fr.slNo != null && /^\d+$/.test(fr.slNo)
-            ? parseInt(fr.slNo, 10)
-            : fr.slNo;
-        row[1] = fr.farmerName;
-        row[2] = fr.villageName;
+        row[0] = fr.farmerName;
+        row[1] = fr.villageName;
+        row[2] = fr.mobileNumber;
         row[3] = fr.joiningDate;
         row[4] = fr.ai;
         row[5] = fr.mm;
-        row[6] = fr.phoneNumber;
       }
       grid.push(row);
     }
@@ -171,7 +167,7 @@ export class ExcelWorkbooksService {
         if (excelRow <= HEADER_ROW) continue;
         const cells = stripLegacyBlankColumnA(grid[ri]);
         if (!Array.isArray(cells)) continue;
-        const has = [0, 1, 2, 3, 4, 5, 6].some((c) => {
+        const has = [0, 1, 2, 3, 4, 5].some((c) => {
           const v = cells[c];
           return v !== null && v !== undefined && String(v).trim() !== '';
         });
@@ -179,13 +175,12 @@ export class ExcelWorkbooksService {
         const ent = em.create(FarmerRow, {
           excelWorkbookId: id,
           rowIndex: excelRow,
-          slNo: cellToString(cells[0]),
-          farmerName: cellToString(cells[1]),
-          villageName: cellToString(cells[2]),
+          farmerName: cellToString(cells[0]),
+          villageName: cellToString(cells[1]),
+          mobileNumber: cellToString(cells[2]),
           joiningDate: cellToString(cells[3]),
           ai: cellToString(cells[4]),
           mm: cellToString(cells[5]),
-          phoneNumber: cellToString(cells[6]),
         });
         await em.save(FarmerRow, ent);
       }
@@ -212,13 +207,12 @@ export class ExcelWorkbooksService {
     for (const fr of rows) {
       if (fr.rowIndex > maxExcelRow) continue;
       const r = sheet.getRow(fr.rowIndex);
-      r.getCell(1).value = fr.slNo ?? '';
-      r.getCell(2).value = fr.farmerName ?? '';
-      r.getCell(3).value = fr.villageName ?? '';
+      r.getCell(1).value = fr.farmerName ?? '';
+      r.getCell(2).value = fr.villageName ?? '';
+      r.getCell(3).value = fr.mobileNumber ?? '';
       r.getCell(4).value = fr.joiningDate ?? '';
       r.getCell(5).value = fr.ai ?? '';
       r.getCell(6).value = fr.mm ?? '';
-      r.getCell(7).value = fr.phoneNumber ?? '';
     }
     const buf = await wb.xlsx.writeBuffer();
     return Buffer.from(buf);
@@ -245,7 +239,7 @@ export class ExcelWorkbooksService {
       excelWorkbookId: workbookId,
       rowIndex: dto.excelRow,
     });
-    const has = [0, 1, 2, 3, 4, 5, 6].some((c) => {
+    const has = [0, 1, 2, 3, 4, 5].some((c) => {
       if (c >= v.length) return false;
       const x = v[c];
       return x !== null && x !== undefined && String(x).trim() !== '';
@@ -254,13 +248,12 @@ export class ExcelWorkbooksService {
     const ent = this.rowRepo.create({
       excelWorkbookId: workbookId,
       rowIndex: dto.excelRow,
-      slNo: v.length > 0 ? cellToString(v[0]) : null,
-      farmerName: v.length > 1 ? cellToString(v[1]) : null,
-      villageName: v.length > 2 ? cellToString(v[2]) : null,
+      farmerName: v.length > 0 ? cellToString(v[0]) : null,
+      villageName: v.length > 1 ? cellToString(v[1]) : null,
+      mobileNumber: v.length > 2 ? cellToString(v[2]) : null,
       joiningDate: v.length > 3 ? cellToString(v[3]) : null,
       ai: v.length > 4 ? cellToString(v[4]) : null,
       mm: v.length > 5 ? cellToString(v[5]) : null,
-      phoneNumber: v.length > 6 ? cellToString(v[6]) : null,
     });
     await this.rowRepo.save(ent);
     return { ok: true };
