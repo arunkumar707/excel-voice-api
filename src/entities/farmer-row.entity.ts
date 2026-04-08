@@ -26,9 +26,6 @@ export class FarmerRow {
   @Column({ name: 'row_index' })
   rowIndex: number;
 
-  @Column({ name: 'sl_no', type: 'varchar', length: 64, nullable: true })
-  slNo: string | null;
-
   @Column({ name: 'farmer_name', type: 'varchar', length: 512, nullable: true })
   farmerName: string | null;
 
@@ -44,8 +41,8 @@ export class FarmerRow {
   @Column({ name: 'mm', type: 'varchar', length: 64, nullable: true })
   mm: string | null;
 
-  @Column({ name: 'phone_number', type: 'varchar', length: 64, nullable: true })
-  phoneNumber: string | null;
+  @Column({ name: 'mobile_number', type: 'varchar', length: 64, nullable: true })
+  mobileNumber: string | null;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
