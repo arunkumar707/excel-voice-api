@@ -25,12 +25,13 @@ function allowCorsOrigin(origin: string | undefined): boolean {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api/v1');
   app.enableCors({
     origin: (origin, cb) => cb(null, allowCorsOrigin(origin)),
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false,
   });
-  app.setGlobalPrefix('api/v1');
   const raw = process.env.PORT ?? String(NEST_LISTEN_PORT_DEFAULT);
   const parsed = Number.parseInt(raw, 10);
   const port = Number.isFinite(parsed) ? parsed : NEST_LISTEN_PORT_DEFAULT;
